@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "awesome")(type "KiCad")(uri "${KIPRJMOD}/awesome-kicad-library/awesome.pretty")(options "")(descr ""))
+)
