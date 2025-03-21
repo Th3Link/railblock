@@ -31,6 +31,7 @@ static void register_custom_string(void);
 static void register_rev(void);
 static void register_can_bitrate(void);
 static void register_selftest(void);
+static void register_relais(void);
 
 static struct {
     struct arg_int *id;
@@ -61,6 +62,13 @@ static struct {
     struct arg_str *cmd;
     struct arg_end *end;
 } device_selftest_args;
+
+static struct {
+    struct arg_int *bank;
+    struct arg_int *channel;
+    struct arg_int *value;
+    struct arg_end *end;
+} device_relais_args;
 
 static int print_device_summary(int argc, char **argv)
 {  
@@ -243,6 +251,26 @@ static int set_device_selftest(int argc, char **argv)
     return 0;
 }
 
+static int set_device_relais(int argc, char **argv)
+{
+    int nerrors = arg_parse(argc, argv, (void **) &device_relais_args);
+    if (nerrors != 0) {
+        arg_print_errors(stderr, device_relais_args.end, argv[0]);
+        return 1;
+    }
+    assert(device_relais_args.bank->count == 1);
+    assert(device_relais_args.channel->count == 1);
+    assert(device_relais_args.value->count == 1);
+    
+    int bank = *device_relais_args.bank->ival;
+    int channel = *device_relais_args.channel->ival;
+    int value = *device_relais_args.value->ival;
+    
+    ConsoleCommandDevice::relais_state(bank, channel, (value != 0));
+    
+    return 0;
+}
+
 static void register_summary(void)
 {
     const esp_console_cmd_t cmd = {
@@ -339,10 +367,26 @@ static void register_selftest(void)
     ESP_ERROR_CHECK( esp_console_cmd_register(&cmd) );
 }
 
+static void register_relais(void)
+{
+    device_relais_args.bank = arg_int1(NULL, NULL, "<bank>", "Bank for the relais. 0=intern,1=first ext,...");
+    device_relais_args.channel = arg_int1(NULL, NULL, "<channel>", "Channel for the relais");
+    device_relais_args.value = arg_int1(NULL, NULL, "<value>", "0 or 1");
+    device_relais_args.end = arg_end(3);
+    const esp_console_cmd_t cmd = {
+        .command = "device_relais",
+        .help = "Set the relais state",
+        .hint = NULL,
+        .func = &set_device_relais,
+        .argtable = &device_relais_args
+    };
+    ESP_ERROR_CHECK( esp_console_cmd_register(&cmd) );
+}
+
 ConsoleCommandDevice* ConsoleCommandDevice::console_command = nullptr;
 
-ConsoleCommandDevice::ConsoleCommandDevice(Console& c, Selftest& s) :
-    m_selftest(s)
+ConsoleCommandDevice::ConsoleCommandDevice(Console& c, Selftest& s, Relais& r) :
+    m_selftest(s), m_relais(r)
 {
     console_command = this;
 }
@@ -357,18 +401,30 @@ void register_device()
     register_rev();
     register_can_bitrate();
     register_selftest();
+    register_relais();
 }
 
 Selftest& ConsoleCommandDevice::selftest()
 {
     return m_selftest;
 }
-
+Relais& ConsoleCommandDevice::relais()
+{
+    return m_relais;
+}
 void ConsoleCommandDevice::selftest_start()
 {
     if (console_command != nullptr)
     {
         console_command->selftest().start();
+    }
+}
+
+void ConsoleCommandDevice::relais_state(uint8_t bank, uint8_t channel, bool value)
+{
+    if (console_command != nullptr)
+    {
+        console_command->relais().state(bank, channel, value);
     }
 }
 

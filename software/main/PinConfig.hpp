@@ -16,20 +16,12 @@ public:
 
 	struct hall_config_t
     {
-        gpio_num_t in_0;
-        gpio_num_t in_1;
-        gpio_num_t in_2;
+        gpio_num_t in[3];
     };
  
 	struct signal_config_t
     {
-        gpio_num_t out_0;
-        gpio_num_t out_1;
-        gpio_num_t out_2;
-        gpio_num_t out_3;
-        gpio_num_t out_4;
-        gpio_num_t out_5;
-        gpio_num_t out_6;
+        gpio_num_t out[7];
     };   
 	
 	struct board_config_t
@@ -42,9 +34,7 @@ public:
     PinConfig();
     void init();
     can_config_t get_can_config();
-    hall_config_t get_hall_config();
-    signal_config_t get_signal_config();
     static const char* TAG;
+    board_config_t board_config;
 private:
-    board_config_t m_board_config;
 };

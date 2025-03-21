@@ -49,7 +49,7 @@ static void can_receive_task(void *this_ptr)
             data[6] = alerts >> 16 & 0xFF;
             data[7] = alerts >> 24 & 0xFF;
             can->send(ICAN::MSG_ID_t::DEVICE_ERROR, data, sizeof(data), false);
-            //ESP_LOGI(CAN::TAG, "TWAI ALERT %lu", alerts);
+            ESP_LOGI(CAN::TAG, "TWAI ALERT %lu", alerts);
         }
     }
     can->shutdown();
@@ -70,7 +70,17 @@ void CAN::init(PinConfig::can_config_t can_config, bool enable_filter)
     m_enable_filter = enable_filter;
     m_shutdown_sem  = xSemaphoreCreateBinary();
 
-    #define RX_TASK_PRIO                    10       //Receiving task priority
+	gpio_config_t io_conf = {};
+        io_conf.pin_bit_mask = (1ULL << can_config.standby);
+        io_conf.mode = GPIO_MODE_OUTPUT;
+        io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+        io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+        io_conf.intr_type = GPIO_INTR_DISABLE;
+        gpio_config(&io_conf);
+
+	gpio_set_level(can_config.standby, 0);
+ 
+#define RX_TASK_PRIO                    10       //Receiving task priority
     static twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(
         m_tx_pin, m_rx_pin, TWAI_MODE_NORMAL);
     g_config.tx_queue_len = 100;
