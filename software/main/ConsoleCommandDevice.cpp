@@ -299,7 +299,7 @@ static void register_id(void)
 
 static void register_type(void)
 {   
-    device_type_args.type = arg_str1(NULL, NULL, "<Button|Relais|Gateway|Rollershutter|SSR>", "Device type");
+    device_type_args.type = arg_str1(NULL, NULL, "<Button|Relais|Gateway|Rollershutter|SSR|Railblock>", "Device type");
     device_type_args.end = arg_end(1);
     const esp_console_cmd_t cmd = {
         .command = "device_type",

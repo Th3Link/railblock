@@ -115,7 +115,8 @@ public:
         Relais = 0x05,
         Gateway = 0x06,
         Rollershutter = 0x07,
-        SSR = 0x08
+        SSR = 0x08,
+        Railblock = 0x09
     };
     
     enum class ROLLERSHUTTER_MODE_t : uint8_t
@@ -187,6 +188,10 @@ public:
         {
             return ICAN::DEVICE_t::SSR;
         }
+        else if (s == "Railblock")
+        {
+            return ICAN::DEVICE_t::Railblock;
+        }
         return ICAN::DEVICE_t::Unknown;
     }
 
@@ -208,6 +213,8 @@ public:
                 return "Rollershutter";
             case ICAN::DEVICE_t::SSR:
                 return "SSR";
+            case ICAN::DEVICE_t::Railblock:
+                return "Railblock";
             case ICAN::DEVICE_t::Unknown:
                 return "Unknown";
         }
