@@ -8,7 +8,6 @@ idf_component_register(SRCS
     "cmd_nvs.c"
     "cmd_system.c" 
     "Device.cpp"
-    "Update.cpp" 
 	"Relais.cpp"
 	"Button.cpp"
 	"button.c"
