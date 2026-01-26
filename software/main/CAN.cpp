@@ -141,7 +141,7 @@ bool CAN::dispatch(uint32_t identifier, uint8_t *data, unsigned int data_len, bo
 }
 
 void CAN::send(MSG_ID_t messageId, uint8_t *data, unsigned int data_len, bool request) {
-    send(m_id << 16 | ((uint8_t)messageId) << 8 | 0x0, data, data_len, request);
+    send(01 << 24 | m_id << 16 | ((uint8_t)messageId) << 8, data, data_len, request);
 }
 
 void CAN::send(uint32_t id, uint8_t *data, unsigned int data_len, bool request) {

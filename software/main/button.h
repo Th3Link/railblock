@@ -40,12 +40,12 @@
 #define CONFIG_BUTTON_MAX 4
 #define CONFIG_BUTTON_POLL_TIMEOUT 1000
 #define CONFIG_BUTTON_AUTOREPEAT_TIMEOUT 500
-#define CONFIG_BUTTON_AUTOREPEAT_INTERVAL 5000
-#define CONFIG_BUTTON_LONG_PRESS_TIMEOUT 5000
-#include <stdint.h>
-#include <stdbool.h>
+#define CONFIG_BUTTON_AUTOREPEAT_INTERVAL 1000
+#define CONFIG_BUTTON_LONG_PRESS_TIMEOUT 1000
 #include <driver/gpio.h>
 #include <esp_err.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,19 +77,18 @@ typedef void (*button_event_cb_t)(button_t *btn, button_state_t state);
 /**
  * Button descriptor struct
  */
-struct button_s
-{
-    gpio_num_t gpio;                //!< GPIO
-    bool internal_pull;             //!< Enable internal pull-up/pull-down
-    uint8_t pressed_level;          //!< Logic level of pressed button
-    bool autorepeat;                //!< Enable autorepeat
-    button_event_cb_t callback;     //!< Button callback
-    void *ctx;                      //!< User data
+struct button_s {
+    gpio_num_t gpio;            //!< GPIO
+    bool internal_pull;         //!< Enable internal pull-up/pull-down
+    uint8_t pressed_level;      //!< Logic level of pressed button
+    bool autorepeat;            //!< Enable autorepeat
+    button_event_cb_t callback; //!< Button callback
+    void *ctx;                  //!< User data
     struct {
         button_state_t state;
         uint32_t pressed_time;
         uint32_t repeating_time;
-    } internal;                     //!< Internal button state
+    } internal; //!< Internal button state
 };
 
 /**

@@ -45,6 +45,6 @@ void Button::init(gpio_num_t gpio, button_id_t id) {
     button.ctx = this;
     button_data.identifier = static_cast<uint8_t>(id);
     button_data.state = ICAN::BUTTON_EVENT_t::RELEASED;
-
+    button_data.type = 0x5;
     ESP_ERROR_CHECK(button_init(&button));
 }
