@@ -4,6 +4,9 @@
 	(generator_version "9.0")
 	(uuid "7c546287-8145-4d83-96e7-2110d73d7871")
 	(paper "A4")
+	(title_block
+		(title "Railblock")
+	)
 	(lib_symbols
 		(symbol "Connector:8P8C"
 			(pin_names
@@ -4052,6 +4055,16 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "SPDX-License-Identifier: CERN-OHL-S-2.0"
+		(exclude_from_sim no)
+		(at 221.234 163.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "10bf9e7d-ef9f-4966-b964-30c8c2bd4923")
+	)
 	(text "Voltage divider:\n12V * 10k/(27k+10k) = 3.24V"
 		(exclude_from_sim no)
 		(at 119.634 141.224 0)
@@ -4795,16 +4808,6 @@
 			(type default)
 		)
 		(uuid "79c3a2d8-b68c-478e-8248-6d0aa05b0ee3")
-	)
-	(wire
-		(pts
-			(xy 213.36 162.56) (xy 260.35 162.56)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7b36d2d5-6e6a-4a62-931f-b11ddd6b17aa")
 	)
 	(wire
 		(pts
