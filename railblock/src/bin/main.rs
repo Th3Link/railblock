@@ -10,6 +10,7 @@ use esp_hal::clock::CpuClock;
 use esp_hal::timer::timg::TimerGroup;
 use esp_hal_embassy::main;
 use esp_println::println;
+use railblock::accessory;
 use railblock::button;
 use railblock::can;
 use railblock::cli;
@@ -45,10 +46,20 @@ async fn main(spawner: Spawner) -> ! {
         peripherals.TWAI0,
         peripherals.GPIO14,
         peripherals.GPIO13,
+        peripherals.GPIO15,
         &spawner,
     )
     .await;
-
+    accessory::init(
+        peripherals.GPIO22,
+        peripherals.GPIO21,
+        peripherals.GPIO19,
+        peripherals.GPIO18,
+        peripherals.GPIO17,
+        peripherals.GPIO16,
+        peripherals.GPIO4,
+        &spawner,
+    );
     Timer::after(Duration::from_millis(2_000)).await;
     cli::init(
         peripherals.UART0,
@@ -57,7 +68,6 @@ async fn main(spawner: Spawner) -> ! {
         &spawner,
     )
     .await;
-
     loop {
         Timer::after(Duration::from_millis(3_000)).await;
     }

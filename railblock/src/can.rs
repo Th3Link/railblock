@@ -7,7 +7,8 @@ use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
 use embedded_can::Frame;
 use esp_hal::Async;
-use esp_hal::gpio::{InputPin, OutputPin};
+use esp_hal::gpio::{InputPin, OutputConfig, OutputPin};
+use esp_hal::gpio::{Level, Output};
 use esp_hal::twai::{self, EspTwaiFrame, TimingConfig, TwaiMode};
 use esp_println::println;
 use heapless::String;
@@ -18,6 +19,7 @@ pub async fn init(
     twai: esp_hal::peripherals::TWAI0<'static>,
     rx: impl InputPin + 'static,
     tx: impl OutputPin + 'static,
+    standby: impl OutputPin + 'static,
     spawner: &Spawner,
 ) {
     const TC: TimingConfig = TimingConfig {
@@ -42,7 +44,7 @@ pub async fn init(
         embassy_time::Timer::after_millis(100).await;
     }
     let (rx, tx) = twai.split();
-
+    let pin1_gpio = Output::new(standby, Level::Low, OutputConfig::default());
     spawner.spawn(can_send_task(tx)).unwrap();
     spawner.spawn(can_recieve_task(rx, device_id)).unwrap();
 }
@@ -58,6 +60,7 @@ pub async fn dispatch(frame: &EspTwaiFrame, device_id: u8) {
     if id.command == Command::Accessory as u8 {
         let a = Accessory::from(frame.data());
         if (a.loc_id & 0xFF) as u8 == device_id {
+            println!("received accessory message");
             accessory::ACCESSORY_CHANNEL.send(a).await;
         }
     }
@@ -65,7 +68,7 @@ pub async fn dispatch(frame: &EspTwaiFrame, device_id: u8) {
 
 pub async fn send_can_message(command: Command, data: &[u8], rtr: bool) {
     let device_id = config().await.get_u8(config::Key::DeviceId).await.unwrap() as u16;
-    let id: embedded_can::ExtendedId = CanId::new(0, 0, command as u8, device_id).into();
+    let id: embedded_can::ExtendedId = CanId::new(0, command as u8, 0, device_id).into();
     let id: esp_hal::twai::ExtendedId = id.into();
     let frame = if rtr {
         EspTwaiFrame::new_remote(id, data.len()).unwrap()

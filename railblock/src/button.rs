@@ -61,7 +61,7 @@ impl Button {
         if next_state != self.state {
             let event = S88Event {
                 node_id: config().await.get_u8(config::Key::DeviceId).await.unwrap() as u16,
-                address: index,
+                address: index + 1,
                 old_state: self.state as u8,
                 new_state: next_state as u8,
                 time: 0,

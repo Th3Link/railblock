@@ -41,9 +41,10 @@ impl S88Event {
 }
 pub struct Accessory {
     pub loc_id: u32,
-    pub position: u8,
+    pub ignore1: u8,
     pub power: u8,
-    pub special_function: u16,
+    pub ignore2: u8,
+    pub position: u8,
 }
 
 impl Accessory {
@@ -55,9 +56,10 @@ impl Accessory {
 
         Self {
             loc_id: u32::from_be_bytes([buf[0], buf[1], buf[2], buf[3]]),
-            position: buf[4],
+            ignore1: buf[4],
             power: buf[5],
-            special_function: u16::from_be_bytes([buf[6], buf[7]]),
+            ignore2: buf[6],
+            position: buf[7],
         }
     }
 }
